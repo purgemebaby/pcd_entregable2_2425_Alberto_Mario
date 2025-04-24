@@ -14,8 +14,10 @@ class CentroLogistico():
     
     def _init(self):
         self.camiones: Set[Camion] = set()
-        
-        
+        self.data: Dict[str, Dict] = {
+            "": {},
+            "olc": {},
+        }
 
 
     # async def run(self):

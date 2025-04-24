@@ -3,7 +3,7 @@ import string
 import random as rd
 from statistics import mean, stdev
 
-from typing import List
+from typing import List, Tuple
 
 
 class Camion:
@@ -19,11 +19,16 @@ class Camion:
 
     def __init__(self):
         self.id: str = self.new_id()
-        self.gms = {"lat": None, "long": None}
+        self.gms: Dict[str, Tuple[float, float, float, str]] = {
+            "lat": None,  # (40, 25, 10.5, 'N')
+            "long": None   # (3, 42, 20.3, 'W')
+        }
         self.temperaturas: List[float] = []
         self.humedades: List[float] = []
         self.media_actual: Dict[str, float] = {"mean_temp": 0.0, "mean_hum": 0.0}
         self.desviacion_actual: Dict[str, float] = {"std_temp": 0.0, "std_hum": 0.0}
+
+
 
     async def update(self):
         """
@@ -33,7 +38,27 @@ class Camion:
 
         - `humedad`: La humedad toma valores entre 85% y 95%. Para conseguir este efecto, se ha utilizado una uniforme de rango 85 a 95. La humedad es controlada, y cada alimento tiene la suya, lo cual hace que estos valores sean equiprobables, perfecto para una uniforme.
 
+        - `gms`: Las coordenadas GMS se generan aleatoriamente. Para conseguir esto, se ha utilizado una normal de media 0 y desvia
         """
+
+        def rango(value: float, min_value: float, max_value: float) -> float:
+            """Define el rango de valores posibles para las coordenadas"""
+            return max(min(value, max_value), min_value)
+
+        lat_grados = rango(rd.normalvariate(self.gms["lat"][0], 0.01), 0, 90)
+        lat_minutos = rango(rd.normalvariate(self.gms["lat"][1], 0.5), 0, 59)
+        lat_segundos = rango(rd.normalvariate(self.gms["lat"][2], 1), 0, 59.999)
+
+    # Generar nueva longitud con límites
+        lon_grados = rango(rd.normalvariate(self.gms["long"][0], 0.1), 0, 180)
+        lon_minutos = rango(rd.normalvariate(self.gms["long"][1], 0.5), 0, 59)
+        lon_segundos = rango(rd.normalvariate(self.gms["long"][2], 1), 0, 59.999)
+
+        self.gms = {
+            "lat": (lat_grados, lat_minutos, lat_segundos, rd.choice(['N', 'S'])),
+            "long": (lon_grados, lon_minutos, lon_segundos, rd.choice(['E', 'W']))
+        }
+
         temperatura = round(rd.normalvariate(21, 0.8), 2) 
         humedad = round(rd.uniform(85, 95), 2)
         self.temperaturas.append(temperatura)
@@ -46,6 +71,7 @@ class Camion:
 
             self.media_actual = dict(zip(["mean_temp", "mean_hum"], medias))
             self.desviacion_actual = dict(zip(["std_temp", "std_hum"], stds))
+
             self.temperaturas.clear()
             self.humedades.clear()
 
