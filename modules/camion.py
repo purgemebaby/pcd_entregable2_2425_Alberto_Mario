@@ -118,7 +118,7 @@ class Camion:
         self.temperaturas.append(temperatura)
         self.humedades.append(humedad)
         self._contador += 1
-        self._half += 1
+
 
         #1. Si ya ha pasado un minuto, actualizamos la media
         if self._half == 2:
@@ -146,6 +146,7 @@ class Camion:
         if self._contador == 6:
             await self.variation2()
             self._contador = 0
+            self._half += 1
 
             if self._half == 2:
                 self.temperaturas.clear()
