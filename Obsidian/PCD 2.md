@@ -39,6 +39,27 @@ El resultado tras el 1º _push_ es exitoso:
 >>![[Pasted image 20250412031253.png]]
 
 
+
+
+### 3. Justificación de patrones
+
+#### R1: En primer lugar, debe de existir una única instancia del sistema que gestione todos los componentes y recursos del sistema logístico 
+
+Este primer caso es un claro ejemplo de necesidad de implementar el patrón 'Singleton' en la clase 'CentroLogistico', para que solamente pueda haber una instancia de ella.
+
+#### R2: Cada camión notifica al sistema con un nuevo valor de localización junto a valores de humedad y temperatura, cada 5 segundos de forma que el sistema pueda recibir actualizaciones de datos en tiempo real y procesarlas adecuadamente. 
+
+Esta condición pide la implementación de un patrón 'Observer', que será implementado para los camiones, que serán los que notifiquen al Centro Logístico cuando se produzca alguna modificación de sus valores, para que puedan ser procesados correctamente.
+
+#### R3: Cada nuevo valor de localización recibido debe de implicar la realización de una serie de pasos encadenados. Dichos pasos son los siguientes: 1. Calcular diferentes estadísticos de la temperatura y humedad (ej: media, desviación típica) durante los últimos 60 segundos. 2. Luego, comprobar si la temperatura actual del camión está por encima de un umbral (dicho umbral puede fijarse por el estudiante). 3. Finalmente, comprobar si durante los últimos 30 segundos la variación de temperatura o humedad ha aumentado o disminuido más de 2 grados centígrados.
+#### R4: los cálculos de la variación de humedad y temperatura se debe lanzar concurrentemente con subrutinas (Asyncio de Python)
+
+#### R5: Antes de procesar los datos en el servidor, se deben adaptar los valores de localización en coordenadas GMS (o GD) que producen los camiones a códigos OCL, para almacenar la información de localización en este formato.
+
+Por último, esta condición
+
+
+
 Procesado de datos ~ Cadena de responsabilidad
 
 Subscriptor mientras que se vaya modificando los valores
